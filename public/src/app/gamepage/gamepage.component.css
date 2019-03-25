@@ -1,0 +1,55 @@
+body {
+    margin: 0px;
+    padding: 0px;
+    line-height: 0px
+}
+
+.row {
+    width: 930px;
+    background-color: rgb(118, 216, 223)
+}
+
+.land {
+    display: inline-block;
+    background-color: rgb(138, 88, 14);
+    height: 30px;
+    width: 30px;
+}
+
+.pokemon {
+    display: inline-block;
+    background-color: blueviolet;
+    height: 30px;
+    width: 30px;
+    background-size: contain;
+}
+
+.board {
+    display: inline-block;
+    opacity: 0.1;
+    height: 30px;
+    width: 30px;
+}
+
+.onigiri {
+    display: inline-block;
+    background-color: rgb(226, 108, 157);
+    height: 30px;
+    width: 30px;
+    background-size: contain;
+}
+
+#ninjaman {
+    background-color: rgb(23, 15, 31);
+    height: 30px;
+    width: 30px;
+    background-size: contain;
+    position: absolute;
+}
+
+#score {
+    line-height: 2px;
+    text-align: justify;
+    text-decoration: blue;
+    font-style: italic;
+}
