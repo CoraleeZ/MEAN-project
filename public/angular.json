@@ -25,7 +25,7 @@
                         "styles": [
                             "src/styles.css"
                         ],
-                        "scripts": ["assets/jquery-2.2.4.js"],
+                        "scripts": [],
                         "es5BrowserSupport": true
                     },
                     "configurations": {

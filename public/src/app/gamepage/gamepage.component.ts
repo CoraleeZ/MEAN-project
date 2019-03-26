@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy} from '@angular/core';
+import { Component, OnInit, OnDestroy,HostBinding, HostListener} from '@angular/core';
 import { HttpService } from '../http.service'
 import { generate } from 'rxjs';
-declare const $: any;
+
 
 @Component({
   selector: 'app-gamepage',
@@ -45,10 +45,29 @@ export class GamepageComponent implements OnInit {
   constructor(private _gamepage: HttpService) { }
 
   ngOnInit() {
-    this.drawPokemon();
     this.drawworld();
+    this.drawPokemon();
     
   }
+
+  // resetWorld(){
+  //   this.world = [
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  //     ]
+  //   this.worldnew=[];
+  // }
 
     drawworld() {
       for (let y = 0; y < this.world.length; y++) {
@@ -62,31 +81,46 @@ export class GamepageComponent implements OnInit {
 
     drawPokemon() {
      this.world[this.pokemon.y][this.pokemon.x]=2;
+     this.worldnew[this.pokemon.y][this.pokemon.x]=this.dict[this.world[this.pokemon.y][this.pokemon.x]];
+    };
+
+    cleanOldPosition(){
+      let j=this.pokemon.x;
+      let i=this.pokemon.y;
+      this.world[i][j]=0;
+      this.worldnew[i][j]=this.dict[this.world[i][j]];
     };
 
 
-    onKeydown(e) {
-      console.log('onkey down:',e);
-      // if (e.keyCode == 37) {
-      //     if (world[ninjaman.y][ninjaman.x - 1] != 1) {
-      //         ninjaman.x--
-      //     }
-      // }
-      // if (e.keyCode == 39) {
-      //     if (world[ninjaman.y][ninjaman.x + 1] != 1) {
-      //         ninjaman.x++
-      //     }
-      // }
+    @HostListener('document:keydown',['$event'])
+    onKeydown(e:KeyboardEvent) {
+      // console.log('trigger a key event');
+
+      this.cleanOldPosition();
+
+      if (e.keyCode == 37) {
+          if (this.world[this.pokemon.y][this.pokemon.x - 1] != null) {
+            this.pokemon.x--
+          }
+      }
+      if (e.keyCode == 39) {
+          if (this.world[this.pokemon.y][this.pokemon.x + 1] != null) {
+            this.pokemon.x++
+          }
+      }
       // if (e.keyCode == 38) {
-      //     if (world[ninjaman.y - 1][ninjaman.x] != 1) {
-      //         ninjaman.y--
+      //     if (this.world[this.pokemon.y - 1][this.pokemon.x] != null) {
+      //       this.pokemon.y--
       //     }
       // }
       // if (e.keyCode == 40) {
-      //     if (world[ninjaman.y + 1][ninjaman.x] != 1) {
-      //         ninjaman.y++
+      //     if (this.world[this.pokemon.y + 1][this.pokemon.x] != null) {
+      //       this.pokemon.y++
       //     }
       // }
+
+      this.drawPokemon();
+      
     }
 
 }
