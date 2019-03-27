@@ -7,6 +7,9 @@ const io = require('socket.io')(server);
 
 // require('./server/routes')(app);
 
+app.all('*',(req,res) =>{
+    res.sendFile(__dirname +'/public/dist/public/index.html');
+});
 
 io.on('connection', socket => { //2
 

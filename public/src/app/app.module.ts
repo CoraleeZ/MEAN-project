@@ -8,11 +8,13 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GamepageComponent } from './gamepage/gamepage.component';
+import { SelectComponent } from './select/select.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    GamepageComponent
+    GamepageComponent,
+    SelectComponent
   ],
   imports: [
     BrowserModule,
