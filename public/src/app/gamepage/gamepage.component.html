@@ -4,6 +4,21 @@
             <div *ngFor='let y of x' class="{{y}}"></div>
         </div>
     </div>
+    <div id="result">
+        <h3>You score:{{display.score}}</h3>
+        <div id='display'>
+            <p *ngFor='let x of display.name'>{{x}}</p>
+        </div>
+        <div *ngFor='let y of display.imgAndTitle'>
+            <p>Lastest Result:</p>
+            <p>{{y.title}}</p>
+            <img src="{{y.url}}">
+            <hr>
+        </div>
+        <div>
+            <p>Top 5 player:</p>
+        </div>
+    </div>
     <img class='pokemon' src='{{pokemon.img}}' [ngStyle]="pokemon.style">
 
 </body>

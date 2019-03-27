@@ -3,7 +3,6 @@ import { HttpService } from '../http.service'
 import { generate } from 'rxjs';
 import {ActivatedRoute, Params} from '@angular/router'
 
-
 @Component({
   selector: 'app-gamepage',
   templateUrl: './gamepage.component.html',
@@ -31,7 +30,8 @@ export class GamepageComponent implements OnInit {
   dict = {
       0: "board",
       1: "land",
-      2: "box"
+      2: "box",
+      3:'checked',
     }
 
   worldnew=[];
@@ -53,13 +53,23 @@ export class GamepageComponent implements OnInit {
     jumpCycle: 0,
   }
 
-  actionCode=[];
- 
-    
+  boxinfo={
+    name:'pikapika',
+    img:'',
+    position:[],
+  }
 
+  display={
+    name:[],
+    imgAndTitle:[],
+    count:0,
+    score:0
+  }
+    
   constructor(private _gamepage: HttpService,private _route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.generateBox();
     this.drawworld();
     this._route.params.subscribe((params: Params) => { this.pokemon.char = params['pokemon']});
     if (this.pokemon.char == "pikachu"){
@@ -81,34 +91,35 @@ export class GamepageComponent implements OnInit {
     this.pokemon.img = './assets/images/'+this.pokemon.char+'/walk-mirror/1.png';
 
     this.drawPokemon();
-    setInterval(this.gravity, 100);   
-    
+    setInterval(this.gravity, 75);    
   }
 
-  // resetWorld(){
-  //   this.world = [
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-  //     ]
-  //   this.worldnew=[];
-  // }
+  generateBox(){
+    this.boxinfo.position=[];
+    this.boxinfo.img='./assets/images/win.gif';
+    let letter=this.boxinfo.name.split('');
+
+    for(let k=0;k<letter.length;k++){
+      let point={x:null,y:null,value:''}; 
+      point.x=Math.floor(Math.random()*30+1);
+      point.y=Math.floor(Math.random()*8+1);
+      if(this.world[point.y][point.x]!=0 || this.world[point.y+1][point.x]!=0 || this.world[point.y-1][point.x]!=0){
+        k-=1;
+      }else{
+        point.value=letter[k];
+        this.world[point.y][point.x]=2;
+        this.boxinfo.position.push(point);
+        this.display.name.push(' ')
+      };
+    };
+    console.log('this.boxinfo.position',this.boxinfo.position)
+  }
 
   gravity = () => {
     let ark = 0;
-    if (this.pokemon.y < 11 && this.pokemon.jumping == false){
+    if (this.pokemon.y < 11 && this.pokemon.jumping == false && this.world[this.pokemon.y+1][this.pokemon.x]==0){
       if (this.pokemon.actionCode.length > 1){
-        console.log(this.pokemon.actionCode);
+        // console.log(this.pokemon.actionCode);
         if(this.pokemon.actionCode.includes(37)){
           --ark;
         }
@@ -116,19 +127,16 @@ export class GamepageComponent implements OnInit {
           ++ark;
         }
       }
-      if (this.pokemon.x + ark < this.world[0].length && this.pokemon.x + ark > 0){
+      if (this.pokemon.x + ark < this.world[0].length && this.pokemon.x + ark > 0 && this.world[this.pokemon.y+1][this.pokemon.x+ark]==0){
         this.pokemon.x += ark;
       }
       this.pokemon.y += 1;
       this.drawPokemon();
     }
-    if (this.pokemon.y == 11){
-      for(let i = 0; i < this.pokemon.actionCode.length; i++){
-        this.pokemon.actionCode.pop();
-      }
+    if (this.pokemon.y == 11 || this.world[this.pokemon.y+1][this.pokemon.x] !=0){
+      this.pokemon.actionCode=[];
+    }
   }
-  }
-
 
 
     drawworld() {
@@ -137,7 +145,7 @@ export class GamepageComponent implements OnInit {
           for (let x = 0; x < this.world[y].length; x++) {
             row.push(this.dict[this.world[y][x]])
           }
-         this.worldnew.push(row)
+        this.worldnew.push(row)
       }
     };
 
@@ -146,14 +154,23 @@ export class GamepageComponent implements OnInit {
       this.pokemon.style.top=this.pokemon.y*30+'px';
     };
 
-  
-
-    // cleanOldPosition(){
-    //   let j=this.pokemon.x;
-    //   let i=this.pokemon.y;
-    //   this.world[i][j]=0;
-    //   this.worldnew[i][j]=this.dict[this.world[i][j]];
-    // };
+    cleanOldPosition(){
+      this.world = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        ]
+    };
 
 
     @HostListener('document:keydown',['$event'])
@@ -175,7 +192,7 @@ export class GamepageComponent implements OnInit {
           this.pokemon.img = './assets/images/'+this.pokemon.char+'/walk-cycle/' + this.pokemon.frame + '.png';
         }
         this.drawPokemon();
-      }
+      };
 
       if (e.keyCode == 39) {
         if (this.world[this.pokemon.y][this.pokemon.x + 1] != null) {
@@ -190,7 +207,7 @@ export class GamepageComponent implements OnInit {
             this.pokemon.img = './assets/images/'+this.pokemon.char+'/walk-mirror/' + this.pokemon.frame + '.png';
         }
         this.drawPokemon();
-      }
+      };
       
       if (e.keyCode == 38) {
         this.pokemon.frame = 1;
@@ -203,8 +220,8 @@ export class GamepageComponent implements OnInit {
         }
         let jump = () => {
           
-          if (this.pokemon.y!=0 && this.pokemon.x<30 && this.pokemon.x>=0 ){
-
+          if (this.pokemon.y>0 && this.pokemon.x<31 && this.pokemon.x>=0 && this.world[this.pokemon.y-1][this.pokemon.x]==0){
+            
               this.pokemon.jumping = true;
 
               if (this.pokemon.frame > this.pokemon.jumpCycle){
@@ -221,21 +238,50 @@ export class GamepageComponent implements OnInit {
 
               if (count < 3){
                 ++count;
-                console.log( this.pokemon.frame)
                 setTimeout(jump, 75);
               }
               else{
                 this.pokemon.jumping = false;
               }
-           }
-           else{
+          }
+          else{
+             //show info in the unchecked box
+            if(this.pokemon.y>0 && this.world[this.pokemon.y-1][this.pokemon.x]==2){
+              this.display.score++;
+              for(let g=0;g<this.boxinfo.position.length;g++){    
+                if(this.boxinfo.position[g]['x']==this.pokemon.x && this.boxinfo.position[g]['y']==(this.pokemon.y-1)){
+                  this.display.name.splice(g, 1, this.boxinfo.position[g].value);
+                  console.log('get a box^^^',this.display)  
+                  this.world[this.pokemon.y-1][this.pokemon.x]=3;
+                  this.display.count++;
+                     //reset the world
+                     if(this.display.count==this.boxinfo.position.length){
+                      this.display.name=[];
+                      this.display.count=0; 
+                      setTimeout(()=>{
+                        this.display.imgAndTitle=[{title:this.boxinfo.name,url:this.boxinfo.img}];
+                        this.cleanOldPosition();                  
+                        this.generateBox();
+                        this.worldnew=[];
+                        this.drawworld(); 
+                      },0)                                         
+                    };
+                  setTimeout(()=>{
+                    this.worldnew=[];
+                    this.drawworld();
+                  },0)
+                  break;
+                };
+              };      
+            };
+
             this.pokemon.jumping = false;
-           }
-        }
+          };
+        };
         jump();
-        console.log(this.pokemon)
-      }
-      
-    }
+      };
+      console.log('actioncode:', this.pokemon.actionCode)
+    };
+
 
 }
