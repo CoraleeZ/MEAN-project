@@ -4,9 +4,13 @@ body {
     line-height: 0px
 }
 
+.world {
+    background-color: rgb(118, 216, 223);
+}
+
 .row {
     width: 930px;
-    background-color: rgb(118, 216, 223)
+    opacity: 0.1;
 }
 
 .land {
@@ -14,14 +18,15 @@ body {
     background-color: rgb(138, 88, 14);
     height: 30px;
     width: 30px;
+    opacity: 0.9;
 }
 
 .pokemon {
     display: inline-block;
-    background-color: blueviolet;
     height: 30px;
     width: 30px;
     background-size: contain;
+    position: absolute;
 }
 
 .board {
@@ -29,27 +34,4 @@ body {
     opacity: 0.1;
     height: 30px;
     width: 30px;
-}
-
-.onigiri {
-    display: inline-block;
-    background-color: rgb(226, 108, 157);
-    height: 30px;
-    width: 30px;
-    background-size: contain;
-}
-
-#ninjaman {
-    background-color: rgb(23, 15, 31);
-    height: 30px;
-    width: 30px;
-    background-size: contain;
-    position: absolute;
-}
-
-#score {
-    line-height: 2px;
-    text-align: justify;
-    text-decoration: blue;
-    font-style: italic;
 }
